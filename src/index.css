@@ -1,13 +1,22 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@font-face {
+    font-family: PressStart2P;
+    src: url("./assets/fonts/PressStart2P-Regular.ttf");
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.win-square-x {
+    color: white !important;
+    background-color: #38A169 !important;
+}
+
+.win-square-o {
+    color: white !important;
+    background-color: #E53E3E !important;
+}
+
+.score-increment {
+    transform: scale(3) !important;
+}
+
+.chakra-alert * {
+    font-size: 14px;
 }
