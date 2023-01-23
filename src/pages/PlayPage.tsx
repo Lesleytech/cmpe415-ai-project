@@ -20,6 +20,7 @@ function PlayPage() {
   const [humanScore, setHumanScore] = useState(0);
   const [aiScore, setAiScore] = useState(0);
   const [winner, setWinner] = useState<SquareType>(null);
+  const [numGamesPlayed, setNumGamesPlayed] = useState(0);
   const toast = useToast();
 
   const showToast = useCallback(
@@ -61,17 +62,14 @@ function PlayPage() {
   );
 
   const replayGame = useCallback(() => {
-    const humanStarts = (aiScore + humanScore) % 2 === 0;
+    const humanStarts = numGamesPlayed % 2 === 1;
 
     removeSquareClassNames();
     setIsX(humanStarts);
     setSquares(Array(9).fill(null));
     setWinner(null);
-
-    if (!humanStarts) {
-      // TODO: Make ai play after a sec
-    }
-  }, [aiScore, humanScore]);
+    setNumGamesPlayed(x => x + 1);
+  }, [numGamesPlayed]);
 
   const resetGame = useCallback(() => {
     removeSquareClassNames();
@@ -101,17 +99,17 @@ function PlayPage() {
     const win = getWin(squares);
 
     if (win) {
-      const { winner, moves } = win;
+      const { player: winPlayer, moves } = win;
 
       moves.forEach((pos, i) => {
         const square = document.getElementById(`square_${pos}`) as HTMLElement;
 
         square.style.transitionDelay = `${i * 100}ms`;
 
-        square.classList.add(`win-square-${winner.toLowerCase()}`);
+        square.classList.add(`win-square-${winPlayer.toLowerCase()}`);
       });
 
-      if (winner === "X") {
+      if (winPlayer === "X") {
         setHumanScore((score) => score + 1);
         showToast({
           title: "You win!",
@@ -125,7 +123,7 @@ function PlayPage() {
         });
       }
 
-      setWinner(winner);
+      setWinner(winPlayer);
     } else if (!isX) {
       setTimeout(handleAiPlay, 500);
     }

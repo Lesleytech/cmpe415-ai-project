@@ -10,6 +10,8 @@ const winningMoves = [
   [0, 4, 8],
   [2, 4, 6],
 ];
+const aiMark = "O";
+const humanMark = "X";
 
 export const getWin = (squares: SquareType[]) => {
   const moves = winningMoves.find(
@@ -20,7 +22,7 @@ export const getWin = (squares: SquareType[]) => {
     const winner = squares[moves[0]];
 
     if (winner) {
-      return { moves, winner };
+      return { moves, player: winner };
     }
   }
 
@@ -39,28 +41,66 @@ export const getEmptySquares = (squares: SquareType[]): number[] => {
   return emptySquares;
 };
 
-const minmax = (squares: SquareType[]) => {
-  return 1;
-};
+interface PlayResultType {index: number, score: number}
 
-export const getAiMove = (squares: SquareType[]) => {
-  let bestScore = -Infinity;
-  let aiMove: number = 0;
-  let score;
-  let squaresCopy;
+function minmax(squares: SquareType[], player: SquareType) {
+  const emptySquares = getEmptySquares(squares);
+  const win = getWin(squares);
 
-  squares.forEach((val, index) => {
-    if (!val) {
-      squaresCopy = [...squares];
-      squaresCopy[index] = "O";
-      score = minmax(squaresCopy);
+  if(win) {
+    if(win.player === humanMark) {
+      return {score: -1};
+    } else {
+      return {score: 1};
+    }
+  } else if(emptySquares.length === 0) {
+    return {score: 0};
+  }
 
-      if (score > bestScore) {
-        bestScore = score;
-        aiMove = index;
+  const allTestPlayResults: PlayResultType[] = [];
+
+  for (let i = 0; i < emptySquares.length; i++) {
+    const playResult: PlayResultType = {score: 0, index: emptySquares[i]};
+
+    squares[emptySquares[i]] = player;
+
+    const result = minmax(squares, player === aiMark ? humanMark: aiMark);
+    playResult.score = result.score;
+
+    squares[emptySquares[i]] = null;
+
+    allTestPlayResults.push(playResult);
+  }
+
+  let bestSquare = emptySquares[0];
+
+  if (player === aiMark) {
+    let bestScore = -Infinity;
+    for (let i = 0; i < allTestPlayResults.length; i++) {
+      if (allTestPlayResults[i].score > bestScore) {
+        bestScore = allTestPlayResults[i].score;
+        bestSquare = i;
       }
     }
-  });
+  } else {
+    let bestScore = Infinity;
+    for (let i = 0; i < allTestPlayResults.length; i++) {
+      if (allTestPlayResults[i].score < bestScore) {
+        bestScore = allTestPlayResults[i].score;
+        bestSquare = i;
+      }
+    }
+  }
 
-  return aiMove;
+  return allTestPlayResults[bestSquare];
+}
+
+export const getAiMove = (squares: SquareType[]) => {
+  let bestMove = minmax([...squares], aiMark);
+
+  if("index" in bestMove) {
+    return bestMove.index;
+  }
+
+  throw new Error("Game has ended")
 };

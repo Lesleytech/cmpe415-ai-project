@@ -13,7 +13,7 @@ function CreditsPage() {
         <Text decoration="underline" fontSize="1.5rem" mb="1em">
           Credits
         </Text>
-        <Text>Lafen Lesley</Text>
+        <Text>Mukuka Nkamba - 21906667</Text>
         <Text>Given Moono</Text>
       </VStack>
       <Box height="50px" />
